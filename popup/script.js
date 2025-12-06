@@ -201,7 +201,6 @@ document.addEventListener("DOMContentLoaded", () => {
       li.addEventListener("click", restore);
       a.addEventListener("click", (e) => {
         e.preventDefault();
-        restore(e);
       });
 
       const del = document.createElement("button");
