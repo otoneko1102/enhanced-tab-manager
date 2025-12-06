@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Enhanced Tab Manager</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <section class="section settings-box">
+      <h2 data-i18n="hSettings">Settings</h2>
+      <label class="toggle-row">
+        <input type="checkbox" id="chk-enable-manager" />
+        <span data-i18n="lblEnableManager">Enable Tab Manager</span>
+      </label>
+      <label class="toggle-row">
+        <input type="checkbox" id="chk-enable-grouping" />
+        <span data-i18n="lblEnableGrouping">Enable Grouping</span>
+      </label>
+      <label class="toggle-row indent">
+        <input type="checkbox" id="chk-keep-window" />
+        <span data-i18n="lblKeepWindow">Create empty tab on close</span>
+      </label>
+
+      <div
+        style="margin-top: 12px; border-top: 1px dashed #ddd; padding-top: 8px"
+      >
+        <h3
+          style="font-size: 0.9rem; margin: 0 0 6px 0; color: #555"
+          data-i18n="hUrlOptions"
+        >
+          Grouping Options
+        </h3>
+        <label class="toggle-row small">
+          <input type="checkbox" id="opt-ignore-protocol" />
+          <span data-i18n="lblIgnoreProtocol">Ignore Protocol</span>
+        </label>
+        <label class="toggle-row small">
+          <input type="checkbox" id="opt-ignore-www" />
+          <span data-i18n="lblIgnoreWww">Ignore WWW</span>
+        </label>
+        <label class="toggle-row small">
+          <input type="checkbox" id="opt-ignore-query" />
+          <span data-i18n="lblIgnoreQuery">Ignore Query</span>
+        </label>
+        <label class="toggle-row small">
+          <input type="checkbox" id="opt-ignore-hash" />
+          <span data-i18n="lblIgnoreHash">Ignore Hash</span>
+        </label>
+        <label class="toggle-row small">
+          <input type="checkbox" id="opt-domain-only" />
+          <span data-i18n="lblDomainOnly">Domain Only</span>
+        </label>
+        <label class="toggle-row small">
+          <input type="checkbox" id="opt-disable-wildcards" />
+          <span data-i18n="lblDisableWildcards">Disable Wildcards</span>
+        </label>
+      </div>
+
+      <div
+        style="margin-top: 12px; border-top: 1px dashed #ddd; padding-top: 8px"
+      >
+        <h3
+          style="font-size: 0.9rem; margin: 0 0 6px 0; color: #555"
+          data-i18n="hDataManage"
+        >
+          Data
+        </h3>
+        <div class="btn-group">
+          <button id="btn-export" data-i18n="btnExport">Export</button>
+          <button id="btn-import-trigger" data-i18n="btnImport">Import</button>
+          <input
+            type="file"
+            id="file-import"
+            accept=".json"
+            style="display: none"
+          />
+        </div>
+      </div>
+    </section>
+
+    <div id="manager-ui">
+      <section class="section">
+        <h2 data-i18n="hClosedTabs">Closed Tabs</h2>
+        <div class="btn-group">
+          <button id="restore-all" data-i18n="btnRestoreAll">
+            Restore All
+          </button>
+          <button id="clear-all" data-i18n="btnClearAll">Clear All</button>
+        </div>
+        <ul id="closed-list" class="tab-list"></ul>
+      </section>
+      <section class="section">
+        <div class="btn-group">
+          <button id="save-close-all" data-i18n="btnSaveCloseAll">
+            Save & Close All Tabs
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div id="grouping-ui">
+      <section class="section">
+        <h2 data-i18n="hTabGroups">Group Settings</h2>
+        <ul id="group-list" class="group-list"></ul>
+        <button id="add-group" data-i18n="btnAddGroup">+ Add Group</button>
+      </section>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+_locales/
+node_modules/
+manifest.json
+package-lock.json
+package.json

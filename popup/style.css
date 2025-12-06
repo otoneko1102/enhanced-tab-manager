@@ -1,0 +1,165 @@
+:root {
+  --bg: #f9fafb;
+  --fg: #111;
+  --border: #ddd;
+  --accent: #007acc;
+  --accent-hover: #005fa3;
+  --button-bg: #fff;
+  --button-hover: #f0f4f8;
+  --font: "Segoe UI", "Roboto", sans-serif;
+}
+
+body {
+  width: 400px;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--fg);
+  margin: 0;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 0.95rem;
+  margin: 0 0 8px 0;
+  border-left: 4px solid var(--accent);
+  padding-left: 8px;
+  color: var(--accent);
+}
+
+.settings-box {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.toggle-row:last-child {
+  margin-bottom: 0;
+}
+
+.toggle-row input {
+  margin-right: 8px;
+}
+
+.indent {
+  margin-left: 20px;
+}
+
+.toggle-row.small {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 4px;
+  margin-left: 8px;
+}
+
+.tab-list,
+.group-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.tab-list li,
+.group-list li {
+  padding: 8px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-list li:last-child,
+.group-list li:last-child {
+  border-bottom: none;
+}
+
+.tab-list li:nth-child(odd),
+.group-list li:nth-child(odd) {
+  background: #f6f8fa;
+}
+
+.tab-list li {
+  color: #005fa3;
+  cursor: pointer;
+}
+
+.btn-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+button {
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--button-bg);
+  color: var(--fg);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+
+button:hover {
+  background: var(--button-hover);
+  border-color: var(--accent);
+}
+
+.group-row {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.color-select {
+  width: 70px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.group-name {
+  flex: 1;
+  min-width: 80px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.group-patterns {
+  flex: 2;
+  min-width: 100px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
