@@ -8,8 +8,97 @@ function debounce(fn, wait = 300) {
   };
 }
 
+function punycodeToUnicode(domain) {
+  const base = 36;
+  const tMin = 1;
+  const tMax = 26;
+  const skew = 38;
+  const damp = 700;
+  const initialBias = 72;
+  const initialN = 128;
+  const delimiter = "-";
+
+  let output = [];
+  let input = domain.split("");
+  let i = domain.lastIndexOf(delimiter);
+  let n = initialN;
+  let bias = initialBias;
+  let index = 0;
+
+  if (i > 0) {
+    output = input.slice(0, i);
+    input = input.slice(i + 1);
+  }
+
+  while (input.length > 0) {
+    let oldi = index;
+    let w = 1;
+
+    for (let k = base; ; k += base) {
+      const charCode = input.shift().charCodeAt(0);
+      const digit = charCode - (charCode < 58 ? 22 : charCode < 91 ? 65 : 97);
+      index += digit * w;
+
+      const t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
+
+      if (digit < t) break;
+      w *= base - t;
+    }
+
+    bias = adapt(index - oldi, output.length + 1, oldi === 0);
+    n += Math.floor(index / (output.length + 1));
+    index %= output.length + 1;
+    output.splice(index++, 0, String.fromCharCode(n));
+  }
+
+  return output.join("");
+
+  function adapt(delta, numPoints, firstTime) {
+    delta = firstTime ? Math.floor(delta / damp) : delta >> 1;
+    delta += Math.floor(delta / numPoints);
+    let k = 0;
+    while (delta > ((base - tMin) * tMax) >> 1) {
+      delta = Math.floor(delta / (base - tMin));
+      k += base;
+    }
+    return k + Math.floor(((base - tMin + 1) * delta) / (delta + skew));
+  }
+}
+
+function decodePunycodeUrl(url) {
+  try {
+    const punycodePattern = /\bxn--[a-zA-Z0-9\-]+/i;
+    if (!punycodePattern.test(url)) return url;
+    try {
+      const urlObj = new URL(url.includes("://") ? url : `http://${url}`);
+      const hostname = urlObj.hostname;
+      if (hostname.includes("xn--")) {
+        const decodedHost = hostname
+          .split(".")
+          .map((part) =>
+            part.startsWith("xn--") ? punycodeToUnicode(part.slice(4)) : part,
+          )
+          .join(".");
+        return url.replace(hostname, decodedHost);
+      }
+    } catch (e) {
+      return url
+        .split(".")
+        .map((part) => {
+          if (part.startsWith("xn--")) return punycodeToUnicode(part.slice(4));
+
+          return part;
+        })
+        .join(".");
+    }
+    return url;
+  } catch (e) {
+    return url;
+  }
+}
+
 function normalizeUrl(url, settings) {
-  let processed = url;
+  let processed = decodePunycodeUrl(url);
 
   if (settings.optIgnoreProtocol) {
     processed = processed.replace(/^https?:\/\//, "");
@@ -44,48 +133,74 @@ function normalizeUrl(url, settings) {
   return processed;
 }
 
-function smartIncludes(url, pattern) {
+function isMatch(url, pattern, disableWildcards) {
   if (!pattern) return false;
+
+  const currentDomain = url;
+  const domain = pattern;
+
+  if (domain === currentDomain) {
+    return true;
+  }
+
+  if (disableWildcards) {
+    return currentDomain.includes(domain);
+  }
+
+  if (domain.startsWith("*.")) {
+    const cleanPattern = domain.replace("*", "");
+    if (`.${currentDomain}`.endsWith(cleanPattern)) {
+      return true;
+    }
+  }
+
+  if (domain.endsWith(".*")) {
+    const cleanPattern = domain.replace("*", "");
+    if (`${currentDomain}.`.startsWith(cleanPattern)) {
+      return true;
+    }
+  }
+
+  if (domain.startsWith("*.") && domain.endsWith(".*")) {
+    const cleanPattern = domain.replace(/\*/g, "");
+    if (`.${currentDomain}.`.includes(cleanPattern)) {
+      return true;
+    }
+  }
+
+  if (!domain.includes(".")) {
+    if (domain.startsWith("*") && currentDomain.endsWith(domain.slice(1)))
+      return true;
+    if (domain.endsWith("*") && currentDomain.startsWith(domain.slice(0, -1)))
+      return true;
+  }
+
+  return smartIncludes(currentDomain, domain);
+}
+
+function smartIncludes(url, pattern) {
+  const clean = pattern.replace(/\*/g, "");
+  if (!clean) return false;
 
   let searchPos = 0;
   while (searchPos < url.length) {
-    const index = url.indexOf(pattern, searchPos);
+    const index = url.indexOf(clean, searchPos);
     if (index === -1) return false;
 
     const prevChar = index > 0 ? url[index - 1] : null;
     const isBoundaryStart = index === 0 || /[^a-zA-Z0-9]/.test(prevChar);
 
-    if (isBoundaryStart) {
+    const nextCharIndex = index + clean.length;
+    const nextChar = nextCharIndex < url.length ? url[nextCharIndex] : null;
+    const isBoundaryEnd =
+      nextCharIndex === url.length || /[^a-zA-Z0-9]/.test(nextChar);
+
+    if (isBoundaryStart && isBoundaryEnd) {
       return true;
     }
-
     searchPos = index + 1;
   }
-
   return false;
-}
-
-function isMatch(url, pattern, disableWildcards) {
-  if (!pattern) return false;
-
-  if (disableWildcards) {
-    return smartIncludes(url, pattern);
-  }
-
-  if (/^["'].*["']$/.test(pattern)) {
-    const clean = pattern.slice(1, -1);
-    return url === clean;
-  }
-  if (pattern.endsWith("*") && !pattern.startsWith("*")) {
-    const clean = pattern.slice(0, -1);
-    return url.startsWith(clean);
-  }
-  if (pattern.startsWith("*") && !pattern.endsWith("*")) {
-    const clean = pattern.slice(1);
-    return url.endsWith(clean);
-  }
-  const clean = pattern.replace(/^\*|\*$/g, "");
-  return smartIncludes(url, clean);
 }
 
 export const scheduleGrouping = debounce(() => {
@@ -141,7 +256,9 @@ async function applyTabGrouping(groups, settings) {
       const matched = tabs.filter((t) => {
         if (processedTabIds.has(t.id) || typeof t.url !== "string")
           return false;
+
         const cleanUrl = normalizeUrl(t.url, settings);
+
         return group.patterns.some((p) =>
           isMatch(cleanUrl, p, settings.optDisableWildcards),
         );
