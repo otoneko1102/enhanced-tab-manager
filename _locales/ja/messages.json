@@ -1,6 +1,6 @@
 {
   "appName": { "message": "Enhanced Tab Manager" },
-  "appDesc": { "message": "タブのグループ化(色指定可)と保存・復元を管理します。" },
+  "appDesc": { "message": "タブのグループ化と保存・復元を管理します。" },
   "cmdSaveClose": { "message": "すべてのタブを保存して閉じる" },
   "cmdRestore": { "message": "すべてのタブの履歴を復元" },
   "cmdClear": { "message": "すべてのタブの履歴を削除" },

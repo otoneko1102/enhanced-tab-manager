@@ -1,6 +1,6 @@
 {
   "appName": { "message": "Enhanced Tab Manager" },
-  "appDesc": { "message": "Manage tabs with grouping, colors, and save/restore functionality." },
+  "appDesc": { "message": "Manage tabs with grouping and save/restore functionality." },
   "cmdSaveClose": { "message": "Save and close all tabs" },
   "cmdRestore": { "message": "Restore all closed tabs" },
   "cmdClear": { "message": "Clear saved tab history" },
