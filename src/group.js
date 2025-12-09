@@ -69,6 +69,7 @@ function decodePunycodeUrl(url) {
   try {
     const punycodePattern = /\bxn--[a-zA-Z0-9\-]+/i;
     if (!punycodePattern.test(url)) return url;
+
     try {
       const urlObj = new URL(url.includes("://") ? url : `http://${url}`);
       const hostname = urlObj.hostname;
@@ -86,7 +87,6 @@ function decodePunycodeUrl(url) {
         .split(".")
         .map((part) => {
           if (part.startsWith("xn--")) return punycodeToUnicode(part.slice(4));
-
           return part;
         })
         .join(".");
@@ -133,6 +133,44 @@ function normalizeUrl(url, settings) {
   return processed;
 }
 
+function smartIncludes(url, pattern) {
+  const clean = pattern.replace(/\*/g, "");
+  if (!clean) return false;
+
+  let searchPos = 0;
+  while (searchPos < url.length) {
+    const index = url.indexOf(clean, searchPos);
+    if (index === -1) return false;
+
+    const startChar = clean[0];
+    const isPatternStartAlpha = /[a-zA-Z0-9]/.test(startChar);
+
+    let isBoundaryStart = true;
+    if (isPatternStartAlpha) {
+      const prevChar = index > 0 ? url[index - 1] : null;
+      isBoundaryStart = index === 0 || /[^a-zA-Z0-9]/.test(prevChar);
+    }
+
+    const endChar = clean[clean.length - 1];
+    const isPatternEndAlpha = /[a-zA-Z0-9]/.test(endChar);
+
+    let isBoundaryEnd = true;
+    if (isPatternEndAlpha) {
+      const nextCharIndex = index + clean.length;
+      const nextChar = nextCharIndex < url.length ? url[nextCharIndex] : null;
+      isBoundaryEnd =
+        nextCharIndex === url.length || /[^a-zA-Z0-9]/.test(nextChar);
+    }
+
+    if (isBoundaryStart && isBoundaryEnd) {
+      return true;
+    }
+
+    searchPos = index + 1;
+  }
+  return false;
+}
+
 function isMatch(url, pattern, disableWildcards) {
   if (!pattern) return false;
 
@@ -144,7 +182,7 @@ function isMatch(url, pattern, disableWildcards) {
   }
 
   if (disableWildcards) {
-    return currentDomain.includes(domain);
+    return smartIncludes(currentDomain, domain);
   }
 
   if (domain.startsWith("*.")) {
@@ -163,44 +201,11 @@ function isMatch(url, pattern, disableWildcards) {
 
   if (domain.startsWith("*.") && domain.endsWith(".*")) {
     const cleanPattern = domain.replace(/\*/g, "");
-    if (`.${currentDomain}.`.includes(cleanPattern)) {
+    if (`${currentDomain}.`.includes(cleanPattern)) {
       return true;
     }
   }
-
-  if (!domain.includes(".")) {
-    if (domain.startsWith("*") && currentDomain.endsWith(domain.slice(1)))
-      return true;
-    if (domain.endsWith("*") && currentDomain.startsWith(domain.slice(0, -1)))
-      return true;
-  }
-
   return smartIncludes(currentDomain, domain);
-}
-
-function smartIncludes(url, pattern) {
-  const clean = pattern.replace(/\*/g, "");
-  if (!clean) return false;
-
-  let searchPos = 0;
-  while (searchPos < url.length) {
-    const index = url.indexOf(clean, searchPos);
-    if (index === -1) return false;
-
-    const prevChar = index > 0 ? url[index - 1] : null;
-    const isBoundaryStart = index === 0 || /[^a-zA-Z0-9]/.test(prevChar);
-
-    const nextCharIndex = index + clean.length;
-    const nextChar = nextCharIndex < url.length ? url[nextCharIndex] : null;
-    const isBoundaryEnd =
-      nextCharIndex === url.length || /[^a-zA-Z0-9]/.test(nextChar);
-
-    if (isBoundaryStart && isBoundaryEnd) {
-      return true;
-    }
-    searchPos = index + 1;
-  }
-  return false;
 }
 
 export const scheduleGrouping = debounce(() => {
@@ -256,9 +261,7 @@ async function applyTabGrouping(groups, settings) {
       const matched = tabs.filter((t) => {
         if (processedTabIds.has(t.id) || typeof t.url !== "string")
           return false;
-
         const cleanUrl = normalizeUrl(t.url, settings);
-
         return group.patterns.some((p) =>
           isMatch(cleanUrl, p, settings.optDisableWildcards),
         );

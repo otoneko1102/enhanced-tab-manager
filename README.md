@@ -44,14 +44,14 @@
 You can use the following patterns to define group rules.
 グループの定義には以下のパターン記法が使用できます。
 
-| Pattern / 記法 | Description / 説明 | Match Example / 一致 | No-Match / 不一致 |
-| :--- | :--- | :--- | :--- |
-| **`word`** | **Smart Partial Match (Default)**<br>Matches whole words/domains only.<br>単語境界を考慮した部分一致（デフォルト） | `word.com`<br>`sub.word.org` | `sword.com`<br>`keywords.net` |
-| **`"exact.com"`** | **Exact Match**<br>Matches the entire URL/Domain perfectly.<br>完全一致 | `exact.com` | `sub.exact.com`<br>`exact.com/path` |
-| **`prefix*`** | **Starts With**<br>Matches the beginning of the string.<br>前方一致 | `prefix-test.com` | `my-prefix.com` |
-| **`*suffix`** | **Ends With**<br>Matches the end of the string.<br>後方一致 | `test.suffix` | `suffix.test` |
-| **`*.domain.com`** | **Subdomain Wildcard**<br>Matches subdomains only.<br>サブドメインのみ一致 | `blog.domain.com` | `domain.com`<br>`other.com` |
-| **`domain.*`** | **TLD Wildcard**<br>Matches any Top Level Domain.<br>TLDワイルドカード | `domain.com`<br>`domain.jp` | `my-domain.com` |
+| Pattern / 記法     | Description / 説明                                                                                                 | Match Example / 一致         | No-Match / 不一致                   |
+| :----------------- | :----------------------------------------------------------------------------------------------------------------- | :--------------------------- | :---------------------------------- |
+| **`word`**         | **Smart Partial Match (Default)**<br>Matches whole words/domains only.<br>単語境界を考慮した部分一致（デフォルト） | `word.com`<br>`sub.word.org` | `sword.com`<br>`keywords.net`       |
+| **`"exact.com"`**  | **Exact Match**<br>Matches the entire URL/Domain perfectly.<br>完全一致                                            | `exact.com`                  | `sub.exact.com`<br>`exact.com/path` |
+| **`prefix*`**      | **Starts With**<br>Matches the beginning of the string.<br>前方一致                                                | `prefix-test.com`            | `my-prefix.com`                     |
+| **`*suffix`**      | **Ends With**<br>Matches the end of the string.<br>後方一致                                                        | `test.suffix`                | `suffix.test`                       |
+| **`*.domain.com`** | **Subdomain Wildcard**<br>Matches subdomains only.<br>サブドメインのみ一致                                         | `blog.domain.com`            | `domain.com`<br>`other.com`         |
+| **`domain.*`**     | **TLD Wildcard**<br>Matches any Top Level Domain.<br>TLDワイルドカード                                             | `domain.com`<br>`domain.jp`  | `my-domain.com`                     |
 
 > [!Note]
 > Before matching, URLs are normalized based on your settings (e.g., removing `https://`, `www.`, or query parameters).
