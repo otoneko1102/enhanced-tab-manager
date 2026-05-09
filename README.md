@@ -6,7 +6,7 @@
 | ------- | --------------- |
 | EN / JA | -               |
 
-> For correction requests, visit [Issues](https://github.com/otoneko1102/enhanced-tab-manager/issues).
+> For correction requests, visit [Issues](https://github.com/otnc/enhanced-tab-manager/issues).
 
 ## Key Features
 
@@ -60,7 +60,7 @@ You can use the following patterns to define group rules.
 ### Download
 
 - ~~Chrome Webstore~~
-- [GitHub Releases](https://github.com/otoneko1102/enhanced-tab-manager/releases)
+- [GitHub Releases](https://github.com/otnc/enhanced-tab-manager/releases)
 
 ## Get Support
 
